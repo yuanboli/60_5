@@ -1,5 +1,5 @@
 #ifndef BinaryHeapH
-#define BinaryHeaph
+#define BinaryHeapH
 #include "blood.h"
 
 class BinaryHeap
