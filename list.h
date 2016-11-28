@@ -1,5 +1,6 @@
 #ifndef listH
 #define listH
+#include <iostream>
 
 ///
 /*
@@ -25,6 +26,8 @@ class List
 public:
 	ListNode* root;
 	void insert(int destination, int cap);
+	List(){root = NULL;}
+	void operator= (List& rhs);
 } ;
 
 
