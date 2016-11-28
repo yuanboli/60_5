@@ -1,1 +1,2 @@
 12:22 11/28 Graph::Graph finish, the basic graph representation.
+3:13 11/28 struggle with copy constructor of list, finish finding rank for each code.
