@@ -1,8 +1,8 @@
-#include "BinaryHeap.h"
+#include "BinaryMaxHeap.h"
 #include "iostream"
 #include <cstdlib>
 
-void BinaryHeap::insert(Vertex x)
+void BinaryMaxHeap::insert(Vertex x)
 {
 	if(currentSize == capacity - 1)
 	{
@@ -10,13 +10,13 @@ void BinaryHeap::insert(Vertex x)
 		exit(0);
 	}
 	int hole = ++ currentSize;
-	for(; hole > 1 && x.rank < array[hole / 2].rank; hole /= 2)
+	for(; hole > 1 && !(x < array[hole / 2]); hole /= 2)
 		array[hole] = array[hole / 2];
 	array[hole] = x;
 }
 
 
-bool BinaryHeap::isEmpty()
+bool BinaryMaxHeap::isEmpty()
 {
 	if(currentSize == 0)
 		return true;
@@ -25,7 +25,7 @@ bool BinaryHeap::isEmpty()
 }
 
 
-Vertex BinaryHeap::deleteMin()
+Vertex BinaryMaxHeap::deleteMax()
 {
 	if(isEmpty())
 	{
@@ -33,15 +33,15 @@ Vertex BinaryHeap::deleteMin()
 		exit(0);
 	}
 
-	Vertex minItem = Vertex();
-	minItem = array[1];
+	Vertex maxItem = Vertex();
+	maxItem = array[1];
 	array[1] = array[currentSize--];
 	percolateDown(1);
-	return minItem;
+	return maxItem;
 }
 
 
-void BinaryHeap::percolateDown(int hole)
+void BinaryMaxHeap::percolateDown(int hole)
 {
 	int child;
 	Vertex tmp = Vertex();
@@ -50,9 +50,9 @@ void BinaryHeap::percolateDown(int hole)
 	for(; hole*2 <= currentSize; hole = child)
 	{
 		child = hole*2;
-		if(child != currentSize && array[child + 1].rank < array[child].rank)
+		if(child != currentSize && !(array[child + 1] < array[child]))
 			child++;
-		if(array[child].rank < tmp.rank)
+		if(!(array[child] < tmp))
 			array[hole] = array[child];
 		else
 			break;

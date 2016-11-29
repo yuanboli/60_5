@@ -1,6 +1,7 @@
 #include "blood.h"
 #include "bloodRunner.h"
 #include "BinaryHeap.h"
+#include "BinaryMaxHeap.h"
 
 /*
 	functionality: insert the vessel to vertex edges member.
@@ -60,6 +61,7 @@ Graph::Graph(Vessel vessels[], int vesselCount, int cellCount)
 	{
 		vertex[i].fed = false;
 		vertex[i].ID = i;
+		vertex[i].fedNumber = -1;
 	}
 
 	for(int i = 0; i < vesselCount; i++)
@@ -160,9 +162,15 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 */
 int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
+	//init residualGraph vertex.
+	*residualGraph = *network;//need copy constructor;
+	for(int i = 0; i < residualGraph->vertexCount; i++)
+	{
+		residualGraph->vertex[i].known = false;
+	}
+
 	//a loop to find the flow for each time
 		//find a max flow
-	residualGraph = network;//need copy constructor;
 	while(newFlow(fullFlows, emptyFlows))
 	{
 	
@@ -185,5 +193,17 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 */
 bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 {
+	//use Dijkstra to find a flow
+	BinaryMaxHeap* heap = new BinaryMaxHeap();	
+	residualGraph->vertex[0].score = 0;
+	heap->insert(residualGraph->vertex[0]);
+	while(!heap->isEmpty())
+	{
+		Vertex v = Vertex();
+		v = heap->deleteMax();
+		residualGraph->vertex[v.ID].known = true;
+
+	}
+	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed.
 	return false;
 }

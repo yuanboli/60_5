@@ -1,5 +1,5 @@
-blood.out: blood.o bloodRunner.o list.o BinaryHeap.o
-	g++ -Wall -ansi -g -o blood.out blood.o bloodRunner.o list.o BinaryHeap.o
+blood.out: blood.o bloodRunner.o list.o BinaryHeap.o BinaryMaxHeap.o
+	g++ -Wall -ansi -g -o blood.out blood.o bloodRunner.o list.o BinaryHeap.o BinaryMaxHeap.o
 
 blood.o: blood.cpp bloodShort.h bloodRunner.h 
 	g++ -Wall -ansi -g -c blood.cpp
@@ -12,6 +12,9 @@ list.o: list.h list.cpp
 
 BinaryHeap.o: BinaryHeap.h BinaryHeap.cpp
 	g++ -Wall -ansi -g -c BinaryHeap.cpp
+
+BinaryMaxHeap.o:	BinaryMaxHeap.h BinaryMaxHeap.cpp
+	g++ -Wall -ansi -g -c BinaryMaxHeap.cpp
 
 clean:
 	rm -f blood.out *.o

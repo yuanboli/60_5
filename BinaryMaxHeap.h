@@ -1,16 +1,16 @@
-#ifndef BinaryHeapH
-#define BinaryHeapH
+#ifndef BinaryMaxHeapH
+#define BinaryMaxHeapH
 #include "blood.h"
 
-class BinaryHeap
+class BinaryMaxHeap
 {
 public:
-	explicit BinaryHeap(int cap = 1000)
+	explicit BinaryMaxHeap(int cap = 100)
 	{currentSize = 0; capacity = cap; array = new Vertex[capacity];}
 
 	void insert(Vertex x);
 	bool isEmpty();
-	Vertex deleteMin();
+	Vertex deleteMax();
 
 private:
 	int currentSize;
