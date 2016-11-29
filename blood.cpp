@@ -30,6 +30,7 @@ void Vertex::operator=(Vertex rhs)
 {
 	rank = rhs.rank;
 	ID = rhs.ID;
+	fed = rhs.fed;
 	*edges = *(rhs.edges);
 	known = rhs.known;
 	prev = rhs.prev;
@@ -47,16 +48,19 @@ void Vertex::operator=(Vertex rhs)
 
 	functionality:
 	to form the ajacency list representation of graph
-	also initialize the Vertex IDs
+	also initialize the Vertex IDs and feds.
 */
 Graph::Graph(Vessel vessels[], int vesselCount, int cellCount)
 {
 	vertex = new Vertex[cellCount];
 	vertexCount = cellCount;
 
-	//to initialize IDs
+	//to initialize IDs, feds
 	for(int i = 0; i < cellCount; i++)
+	{
+		vertex[i].fed = false;
 		vertex[i].ID = i;
+	}
 
 	for(int i = 0; i < vesselCount; i++)
 	{
@@ -110,6 +114,22 @@ void Graph::calRank()
 	delete heap;
 }//Graph::calRank
 
+
+///
+/*
+		copy constructor for Graph
+*/
+void Graph::operator=(Graph rhs)
+{
+	vertexCount = rhs.vertexCount;
+	vertex = new Vertex[vertexCount];
+
+	for(int i = 0; i < vertexCount; i++)
+	{
+		vertex[i] = rhs.vertex[i];
+	}
+}//Graph::operator=
+
 ///
 /*
 	constructor of Blood
@@ -134,8 +154,36 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 
 } // Blood()
 
-
+///
+/*
+		This function should find the flow for a pulse;
+*/
 int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
+	//a loop to find the flow for each time
+		//find a max flow
+	residualGraph = network;//need copy constructor;
+	while(newFlow(fullFlows, emptyFlows))
+	{
+	
+	}
+		//update information
+		//form residual graph
+
   return 0;  // to avoid warning for now
 } // calcFlows()
+
+
+///
+/*
+		Blood::newFlow
+		Functionality:
+		
+		calculate a new flow we want to have in a pulse
+		update the information, including residualGraph, network, and fullFlows[], emptyFlows[]
+		return whether there is a new flow formed.
+*/
+bool Blood::newFlow(int fullFlows[], int emptyFlows[])
+{
+	return false;
+}

@@ -16,14 +16,16 @@ class Vertex
 {
 public:
 	Vertex(){edges = new List();}
-	int rank;	//rank is to represent the depth from it to the source (shortest path).
 	int ID;
 	List* edges;
+	bool fed;
   void insertVessel(Vessel vessel);
 	bool operator<(Vertex rhs);
 	void operator=(Vertex rhs);
 
 	// the rest is the member for Dijkstra
+	int rank;	//rank is to represent the depth from it to the source (shortest path).
+	int fedNumber; // fedNumber indicates the 
 	bool known;
 	int prev;
 	double score;	// in Dijstra, it could represent the reference.
@@ -41,6 +43,8 @@ class Graph
 public:
 	Vertex* vertex;
 	int vertexCount;
+
+	void operator=(Graph rhs);
 	Graph(Vessel vessels[], int vesselCount, int cellCount);
 	void calRank(); // this function is to calculate the rank for each vertex.
 } ;
@@ -56,6 +60,7 @@ class Blood
 public:
   Blood(Vessel vessels[], int vesselCount, int cellCount, int depth);
   int calcFlows(int fullFlows[], int emptyFlows[]);
+	bool newFlow(int fullFlows[], int emptyFlows[]);
 }; // class Blood
 
 
