@@ -167,6 +167,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 	for(int i = 0; i < residualGraph->vertexCount; i++)
 	{
 		residualGraph->vertex[i].known = false;
+		residualGraph->vertex[i].score = -1;
 	}
 
 	//a loop to find the flow for each time
@@ -202,6 +203,16 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 		Vertex v = Vertex();
 		v = heap->deleteMax();
 		residualGraph->vertex[v.ID].known = true;
+		ListNode* node = v.edges->root;
+		while(node != NULL)
+		{
+			if(residualGraph->vertex[node->dest].known == false)
+			{
+				
+				double newScore = ???;
+				if(newScore > residualGraph->vertex[node->dest].score)
+			}
+		}
 
 	}
 	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed.
