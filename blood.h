@@ -43,6 +43,7 @@ class Graph
 public:
 	Vertex* vertex;
 	int vertexCount;
+	Graph(Graph* rhs);
 
 	void operator=(Graph rhs);
 	Graph(Vessel vessels[], int vesselCount, int cellCount);

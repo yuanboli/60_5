@@ -116,7 +116,14 @@ void Graph::calRank()
 	delete heap;
 }//Graph::calRank
 
+Graph::Graph(Graph* rhs)
+{
+	vertexCount = rhs->vertexCount;
+	vertex = new Vertex[vertexCount];
 
+	for(int i = 0; i < vertexCount; i++)
+		vertex[i] = rhs->vertex[i];
+}
 ///
 /*
 		copy constructor for Graph
@@ -154,6 +161,9 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 	// calculate rankes
 	network->calRank();
 
+	//care about residualGraph;
+	residualGraph = NULL;
+
 } // Blood()
 
 ///
@@ -163,7 +173,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
 	//init residualGraph vertex.
-	*residualGraph = *network;//need copy constructor;
+	residualGraph = new Graph(network);//need copy constructor;
 
 	//a loop to find the flow for each time
 		//find a max flow
