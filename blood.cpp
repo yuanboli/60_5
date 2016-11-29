@@ -249,7 +249,11 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	int srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
 	int destVertexID = residualGraph->vertexCount - 1;
 	int flow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
-	
-
+	for (; srcVertexID != -1; srcVertexID = residualGraph->vertex[srcVertexID].prev, destVertexID = residualGraph->vertex[destVertexID].prev)
+	{
+		int thisFlow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
+		if (flow > thisFlow)
+			flow = thisFlow;
+	}
 	return false;
 }
