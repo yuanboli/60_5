@@ -249,11 +249,45 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	int srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
 	int destVertexID = residualGraph->vertexCount - 1;
 	int flow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
-	for (; srcVertexID != -1; srcVertexID = residualGraph->vertex[srcVertexID].prev, destVertexID = residualGraph->vertex[destVertexID].prev)
+	int pathSize = residualGraph->vertex[destVertex].fedNumber + 1;
+	int path[pathSize];
+	int flowNeeded = 0;
+	for (int i = 0; srcVertexID != -1; srcVertexID = residualGraph->vertex[srcVertexID].prev, destVertexID = residualGraph->vertex[destVertexID].prev, i++)
 	{
+		path[pathSize - i -1] = destVertexID;
 		int thisFlow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
+		if(residualGraph->vertex[destVertexID].fed == false)
+			flowNeeded ++;
 		if (flow > thisFlow)
 			flow = thisFlow;
 	}
-	return false;
+	if(residualGraph->vertex[0].fed == false)
+		flowNeeded++;
+	if(flow < flowNeeded)
+		flow = flowNeeded;
+	path[0] = 0;
+	
+	
+	//update residualGraphi, network and fullFlows EmptyFlows
+	for(int i = 0; i < pathSize; i++)
+	{
+
+		//update residualGraph, including fed, capacity
+			//capacity
+
+		if(residualGraph->vertex[path[i]].fed == false)
+		{
+			//fed
+			residualGraph->vertex[path[i]].fed = true;
+		}
+		else
+
+		scrVertexID = residualGraph->vertex[scrVertexID].prev;
+		destVertexID = residualGraph->vertex[destVertexID].prev;
+	}
+
+	if(flow == 0)
+		return false;
+	else 
+		return true;
 }
