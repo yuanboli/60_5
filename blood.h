@@ -19,7 +19,7 @@ public:
 	int ID;
 	List* edges;
 	bool fed;
-  void insertVessel(Vessel vessel);
+  void insertVessel(int vesselID, Vessel vessel);
 	bool operator<(Vertex rhs);
 	void operator=(Vertex rhs);
 
@@ -55,6 +55,8 @@ class Blood
 {
 	Graph* network;
 	Graph* residualGraph;
+	int vesselC;
+	int totalFed;
 	int* cellRanks;	// this is an array to store the rank of each cell.
 	//int* sortedVertices;				// this is a sorted vertices array to help blood to gain a reference
 	

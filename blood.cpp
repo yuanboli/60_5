@@ -6,9 +6,9 @@
 /*
 	functionality: insert the vessel to vertex edges member.
 */
-void Vertex::insertVessel(Vessel vessel)
+void Vertex::insertVessel(int vesselID, Vessel vessel)
 {
-	edges->insert(vessel.dest, vessel.capacity);
+	edges->insert(vesselID, vessel.dest, vessel.capacity);
 }//Vertex::insertVessel
 
 
@@ -66,7 +66,7 @@ Graph::Graph(Vessel vessels[], int vesselCount, int cellCount)
 
 	for(int i = 0; i < vesselCount; i++)
 	{
-		vertex[vessels[i].src].insertVessel(vessels[i]);	
+		vertex[vessels[i].src].insertVessel(i, vessels[i]);	
 	}
 }//Graph::Graph
 
@@ -163,6 +163,8 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 
 	//care about residualGraph;
 	residualGraph = NULL;
+	vesselC = vesselCount;
+	totalFed = 0;
 
 } // Blood()
 
@@ -172,6 +174,10 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 */
 int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
+	for(int i = 0; i < vesselC; i++)
+	{
+		fullFlows[i] = emptyFlows[i] = 0;
+	}
 	//init residualGraph vertex.
 	residualGraph = new Graph(network);//need copy constructor;
 
@@ -184,7 +190,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 		//update information
 		//form residual graph
 
-  return 0;  // to avoid warning for now
+  return totalFed;  // to avoid warning for now
 } // calcFlows()
 
 
@@ -197,7 +203,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 		update the information, including residualGraph, network, and fullFlows[], emptyFlows[]
 		return whether there is a new flow formed.
 */
-bool Blood::newFlow(int fullFlows[], int emptyFlows[])
+bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 {
 	//init
 	for(int i = 0; i < residualGraph->vertexCount; i++)
@@ -245,11 +251,15 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	}
 	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed, capacity.
 	
-	//calculate the flow
+	
+
+	//calculate the flow and find the path
 	int srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
 	int destVertexID = residualGraph->vertexCount - 1;
+	if(residualGraph->vertex[destVertexID].score == -1)
+		return false;
 	int flow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
-	int pathSize = residualGraph->vertex[destVertex].fedNumber + 1;
+	int pathSize = residualGraph->vertex[destVertexID].fedNumber + 1;
 	int path[pathSize];
 	int flowNeeded = 0;
 	for (int i = 0; srcVertexID != -1; srcVertexID = residualGraph->vertex[srcVertexID].prev, destVertexID = residualGraph->vertex[destVertexID].prev, i++)
@@ -263,28 +273,55 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	}
 	if(residualGraph->vertex[0].fed == false)
 		flowNeeded++;
-	if(flow < flowNeeded)
+	if(flow > flowNeeded)
 		flow = flowNeeded;
 	path[0] = 0;
 	
 	
 	//update residualGraphi, network and fullFlows EmptyFlows
+	int temp_flow = flow, reducedFlow = 0; //which is used for flow, which will be decrease.
 	for(int i = 0; i < pathSize; i++)
 	{
-
-		//update residualGraph, including fed, capacity
-			//capacity
-
-		if(residualGraph->vertex[path[i]].fed == false)
+		if(i < pathSize - 1)
 		{
-			//fed
-			residualGraph->vertex[path[i]].fed = true;
+			//deal with full/emptyFlows;
+			if(residualGraph->vertex[path[i]].fed == false)
+			{
+				if(temp_flow > 0)
+				{
+					temp_flow --;
+					reducedFlow++;
+					totalFed++;
+					network->vertex[path[i]].fed = true;
+					residualGraph->vertex[path[i]].fed = true;
+				}
+			}
+			int vesselid = residualGraph->vertex[path[i]].edges->findID(path[i+1]);
+			fullFlows[vesselid] += temp_flow;
+			emptyFlows[vesselid] += reducedFlow;
+			
+			//update network, residualGraph, including fed, capacity
+				//capacity
+			residualGraph->vertex[path[i]].edges->reduceCapacity(path[i+1], flow);
 		}
 		else
-
-		scrVertexID = residualGraph->vertex[scrVertexID].prev;
-		destVertexID = residualGraph->vertex[destVertexID].prev;
+		{
+			if(residualGraph->vertex[path[i]].fed == false)
+			{
+				if(temp_flow > 0)
+				{
+					temp_flow --;
+					reducedFlow++;
+					totalFed++;
+					network->vertex[path[i]].fed = true;
+					residualGraph->vertex[path[i]].fed = true;
+				}
+			}
+			
+		}
 	}
+
+	
 
 	if(flow == 0)
 		return false;
