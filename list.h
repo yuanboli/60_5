@@ -12,8 +12,9 @@ class ListNode
 friend class List;
 
 public:
-	ListNode(ListNode* n, int d, int c): next(n), dest(d), capacity(c){}
+	ListNode(ListNode* n,int i, int d, int c): next(n), ID(i), dest(d), capacity(c){}
 	ListNode* next;
+	int ID;
 	int dest;
 	int capacity;
 } ;
@@ -25,10 +26,13 @@ class List
 {
 public:
 	ListNode* root;
-	void insert(int destination, int cap);
+	void insert(int ID, int destination, int cap);
 	List(){root = NULL;}
 	int findCapacity(int destID);
+	int findID(int destID);
+	void reduceCapacity(int destID, int flow);
 	void operator= (List& rhs);
+	void deleteNode(int destID);
 } ;
 
 

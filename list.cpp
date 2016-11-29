@@ -1,9 +1,9 @@
 #include "list.h"
 
 
-void List::insert(int destination, int cap)
+void List::insert(int ID, int destination, int cap)
 {
-	root = new ListNode(root, destination, cap);
+	root = new ListNode(root, ID, destination, cap);
 }
 
 
@@ -16,12 +16,12 @@ void List::operator=(List& rhs)
 	if(rhsnode == NULL)
 		return;
 
-	root = new ListNode(NULL, rhsnode->dest, rhsnode->capacity);
+	root = new ListNode(NULL, rhsnode->ID, rhsnode->dest, rhsnode->capacity);
 	ListNode* node = root;
 	rhsnode = rhsnode->next;
 	while(rhsnode != NULL)
 	{
-		node->next = new ListNode(NULL, rhsnode->dest, rhsnode->capacity);
+		node->next = new ListNode(NULL,rhsnode->ID, rhsnode->dest, rhsnode->capacity);
 		rhsnode = rhsnode->next;
 		node = node->next;
 	}
@@ -40,3 +40,46 @@ int List::findCapacity(int destID)
 	}
 	return -1;
 }
+int List::findID(int destID)
+{
+	ListNode* node = root;
+	while(node != NULL)
+	{
+		if(destID == node->dest)
+			return node->ID;
+
+		node = node->next;
+	}
+	return -1;
+}
+
+void List::reduceCapacity(int destID, int flow)
+{
+	ListNode* node = root;
+	while(node != NULL)
+	{
+		if(destID == node->dest)
+		{
+			node->capacity -= flow;
+			if(node->capacity == 0)
+				deleteNode(destID);
+		}
+		node = node->next;
+	}
+}
+
+
+// we assume that the destID exist
+void List::deleteNode(int destID)
+{
+	ListNode* node, *prev = root;
+	for(node = root; node && node->dest != destID; node = node->next)
+	{
+		prev = node;
+	}
+	if(node == root)
+		root = node->next;
+	else
+		prev->next = node->next;
+}
+
