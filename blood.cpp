@@ -245,5 +245,11 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	}
 	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed, capacity.
 	
+	//calculate the flow
+	int srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
+	int destVertexID = residualGraph->vertexCount - 1;
+	int flow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
+	
+
 	return false;
 }
