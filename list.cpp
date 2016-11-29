@@ -15,6 +15,7 @@ void List::operator=(List& rhs)
 	ListNode* rhsnode = rhs.root;
 	if(rhsnode == NULL)
 		return;
+
 	root = new ListNode(NULL, rhsnode->dest, rhsnode->capacity);
 	ListNode* node = root;
 	rhsnode = rhsnode->next;

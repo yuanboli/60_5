@@ -164,11 +164,6 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
 	//init residualGraph vertex.
 	*residualGraph = *network;//need copy constructor;
-	for(int i = 0; i < residualGraph->vertexCount; i++)
-	{
-		residualGraph->vertex[i].known = false;
-		residualGraph->vertex[i].score = -1;
-	}
 
 	//a loop to find the flow for each time
 		//find a max flow
@@ -194,6 +189,12 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 */
 bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 {
+	//init
+	for(int i = 0; i < residualGraph->vertexCount; i++)
+	{
+		residualGraph->vertex[i].known = false;
+		residualGraph->vertex[i].score = -1;
+	}
 	//use Dijkstra to find a flow
 	BinaryMaxHeap* heap = new BinaryMaxHeap();	
 	residualGraph->vertex[0].score = 0;
@@ -202,19 +203,35 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	{
 		Vertex v = Vertex();
 		v = heap->deleteMax();
-		residualGraph->vertex[v.ID].known = true;
-		ListNode* node = v.edges->root;
-		while(node != NULL)
+		if(residualGraph->vertex[v.ID].known == false)
 		{
-			if(residualGraph->vertex[node->dest].known == false)
+			residualGraph->vertex[v.ID].known = true;
+			ListNode* node = v.edges->root;
+			while(node != NULL)
 			{
-				
-				double newScore = ???;
-				if(newScore > residualGraph->vertex[node->dest].score)
+				if(residualGraph->vertex[node->dest].known == false)
+				{
+					double newScore;
+					if(residualGraph->vertex[node->dest].fed == true)
+						newScore = v.score;
+					else
+					{
+						newScore = v.score + residualGraph->vertex[node->dest].rank * 5 / (v.fed + 1);
+					}
+
+					if(newScore > residualGraph->vertex[node->dest].score)
+					{
+						residualGraph->vertex[node->dest].score = newScore;
+						residualGraph->vertex[node->dest].prev = v.ID;
+						residualGraph->vertex[node->dest].fedNumber = v.fedNumber + 1;
+						heap->insert(residualGraph->vertex[node->dest]);
+					}
+				}
+				node = node->next;
 			}
 		}
-
 	}
-	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed.
+	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed, capacity.
+	
 	return false;
 }
