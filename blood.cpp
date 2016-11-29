@@ -32,6 +32,7 @@ void Vertex::operator=(Vertex rhs)
 	rank = rhs.rank;
 	ID = rhs.ID;
 	fed = rhs.fed;
+	fedNumber = rhs.fedNumber;
 	*edges = *(rhs.edges);
 	known = rhs.known;
 	prev = rhs.prev;
@@ -61,7 +62,6 @@ Graph::Graph(Vessel vessels[], int vesselCount, int cellCount)
 	{
 		vertex[i].fed = false;
 		vertex[i].ID = i;
-		vertex[i].fedNumber = -1;
 	}
 
 	for(int i = 0; i < vesselCount; i++)
@@ -204,10 +204,12 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 	{
 		residualGraph->vertex[i].known = false;
 		residualGraph->vertex[i].score = -1;
+		residualGraph->vertex[i].fedNumber = -1;
 	}
 	//use Dijkstra to find a flow
 	BinaryMaxHeap* heap = new BinaryMaxHeap();	
 	residualGraph->vertex[0].score = 0;
+	residualGraph->vertex[0].fedNumber = 0;
 	heap->insert(residualGraph->vertex[0]);
 	while(!heap->isEmpty())
 	{
@@ -226,7 +228,7 @@ bool Blood::newFlow(int fullFlows[], int emptyFlows[])
 						newScore = v.score;
 					else
 					{
-						newScore = v.score + residualGraph->vertex[node->dest].rank * 5 / (v.fed + 1);
+						newScore = v.score + residualGraph->vertex[node->dest].rank * residualGraph->vertex[node->dest].rank / (v.fedNumber + 1);
 					}
 
 					if(newScore > residualGraph->vertex[node->dest].score)
