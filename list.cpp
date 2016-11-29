@@ -26,3 +26,17 @@ void List::operator=(List& rhs)
 		node = node->next;
 	}
 }
+
+
+int List::findCapacity(int destID)
+{
+	ListNode* node = root;
+	while(node != NULL)
+	{
+		if(destID == node->dest)
+			return node->capacity;
+
+		node = node->next;
+	}
+	return -1;
+}

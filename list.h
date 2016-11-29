@@ -27,6 +27,7 @@ public:
 	ListNode* root;
 	void insert(int destination, int cap);
 	List(){root = NULL;}
+	int findCapacity(int destID);
 	void operator= (List& rhs);
 } ;
 
