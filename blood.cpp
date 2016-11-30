@@ -280,7 +280,14 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 	if(residualGraph->vertex[destVertexID].score == -1 || residualGraph->vertex[destVertexID].score == 0)
 		return false;
 	int flow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
-	int pathSize = residualGraph->vertex[destVertexID].fedNumber + 1;
+	int pathSize = 0;
+	for (; srcVertexID != -1; srcVertexID = residualGraph->vertex[srcVertexID].prev)
+	{
+		pathSize++;
+	}
+	pathSize++;
+	srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
+
 	int path[pathSize];
 	int flowNeeded = 0;
 	for (int i = 0; srcVertexID != -1; srcVertexID = residualGraph->vertex[srcVertexID].prev, destVertexID = residualGraph->vertex[destVertexID].prev, i++)
