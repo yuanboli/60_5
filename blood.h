@@ -20,7 +20,8 @@ public:
 	List* edges;
 	bool fed;
   void insertVessel(int vesselID, Vessel vessel);
-	bool operator<(Vertex rhs);
+//	bool operator<(Vertex& rhs);
+	friend bool operator< (Vertex& lhs, Vertex& rhs);
 	void operator=(Vertex rhs);
 
 	// the rest is the member for Dijkstra
@@ -28,9 +29,11 @@ public:
 	int fedNumber; // fedNumber indicates the 
 	bool known;
 	int prev;
-	double score;	// in Dijstra, it could represent the reference.
+	int flow;
+	int score;	// in Dijstra, it could represent the reference.
 } ;
 
+bool operator< (Vertex& lhs, Vertex& rhs);
 
 ///
 /*

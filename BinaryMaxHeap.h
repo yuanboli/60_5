@@ -6,16 +6,20 @@ class BinaryMaxHeap
 {
 public:
 	explicit BinaryMaxHeap(int cap = 50000)
-	{currentSize = 0; capacity = cap; array = new Vertex[capacity];}
+	{currentSize = 0; capacity = cap; array = new Vertex*[capacity];}
 
-	void insert(Vertex x);
+	void insert(Vertex* x);
 	bool isEmpty();
-	Vertex deleteMax();
+	Vertex* deleteMax();
+	~BinaryMaxHeap()
+	{
+		delete [] array;
+	}
 
 private:
 	int currentSize;
 	int capacity;
-	Vertex* array;
+	Vertex** array;
 	void percolateDown(int hole);
 
 

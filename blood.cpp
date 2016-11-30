@@ -2,7 +2,7 @@
 #include "bloodRunner.h"
 #include "BinaryHeap.h"
 #include "BinaryMaxHeap.h"
-
+#include "time.h"
 /*
 	functionality: insert the vessel to vertex edges member.
 */
@@ -16,13 +16,22 @@ void Vertex::insertVessel(int vesselID, Vessel vessel)
 /*
 	operator < for Vertex
 */
-bool Vertex::operator<(Vertex rhs)
+/*bool Vertex::operator<(Vertex& rhs)
 {
 	if(score < rhs.score)
 		return true;
 	else
 		return false;
 }
+*/
+bool operator< (Vertex& lhs, Vertex& rhs)
+{
+	if(lhs.score /*+ 100*lhs.flow*/ < rhs.score /*+ 100*rhs.flow*/)
+		return true;
+	else
+		return false;
+}
+
 ///
 /*
 	copy constructor
@@ -201,11 +210,13 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 	//init residualGraph vertex.
 	residualGraph = new Graph(network);//need copy constructor;
 
+//debug use
+
+
 	//a loop to find the flow for each time
 		//find a max flow
 	while(newFlow(fullFlows, emptyFlows))
 	{
-	
 	}
 		//update information
 		//form residual graph
@@ -225,54 +236,101 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 */
 bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 {
+	
+//for debug
+//	clock_t start, end;
+//	start = clock();
+	
+	
 	//init
 	for(int i = 0; i < residualGraph->vertexCount; i++)
 	{
 		residualGraph->vertex[i].known = false;
 		residualGraph->vertex[i].score = -1;
+		residualGraph->vertex[i].flow = 0;
 		residualGraph->vertex[i].fedNumber = -1;
 	}
 	//use Dijkstra to find a flow
 	BinaryMaxHeap* heap = new BinaryMaxHeap();	
 	residualGraph->vertex[0].score = 0;
 	residualGraph->vertex[0].fedNumber = 0;
-	heap->insert(residualGraph->vertex[0]);
+	heap->insert(&residualGraph->vertex[0]);
 	while(!heap->isEmpty())
 	{
-		Vertex v = Vertex();
+//		Vertex v = Vertex();
+		Vertex* v;
 		v = heap->deleteMax();
 //		if(residualGraph->vertex[v.ID].known == false)
-		if(residualGraph->vertex[v.ID].score == v.score)
+		if(residualGraph->vertex[v->ID].score == v->score)
 		{
-			residualGraph->vertex[v.ID].known = true;
-			ListNode* node = v.edges->root;
+			residualGraph->vertex[v->ID].known = true;
+			ListNode* node = v->edges->root;
 			while(node != NULL)
 			{
+
+
+//for debug
+//	end = clock();
+//	std::cout << (double)(end - start)/CLOCKS_PER_SEC << "\n";
+
+
+
+
 //**  			if(residualGraph->vertex[node->dest].known == false)
 //** 				{
-					double newScore;
-					if(residualGraph->vertex[node->dest].fed == true)
-						newScore = v.score;
+					int newScore;
+/*					int newFlow;
+					int roadCapacity = residualGraph->vertex[v.ID].edges->findCapacity(node->dest);
+					if(newFlow > roadCapacity)
+					{
+ 					newFlow = roadCapacity;
+					}
+*/					if(residualGraph->vertex[node->dest].fed == true)
+					{
+						newScore = v->score;
+					}
 					else
 					{
-						newScore = v.score + residualGraph->vertex[node->dest].rank * residualGraph->vertex[node->dest].rank * 5 / (v.fedNumber + 1);
+						newScore = v->score + residualGraph->vertex[node->dest].rank  * 5 / (v->fedNumber + 1);
 					}
 
-					if(newScore > residualGraph->vertex[node->dest].score)
+
+
+
+					if(newScore /*+ 100 * newFlow*/ > residualGraph->vertex[node->dest].score /*+ 100 * residualGraph->vertex[node->dest].flow*/)
 					{
 						residualGraph->vertex[node->dest].score = newScore;
-						residualGraph->vertex[node->dest].prev = v.ID;
-						residualGraph->vertex[node->dest].fedNumber = v.fedNumber + 1;
-						heap->insert(residualGraph->vertex[node->dest]);
+						//residualGraph->vertex[node->dest].flow = newFlow;
+						residualGraph->vertex[node->dest].prev = v->ID;
+						residualGraph->vertex[node->dest].fedNumber = v->fedNumber + 1;
+						
+						
+						
+						heap->insert(&residualGraph->vertex[node->dest]);
 //**					}
-				}
+
+					}
+
+
+
+
+
 				node = node->next;
 			}
 		}
 	}
 	//update information related to the flow, including residual graph, fullFlows, emptyFlows, fed, capacity.
 	
-	
+
+
+
+//for debug
+//	end = clock();
+//	std::cout << (double)(end - start)/CLOCKS_PER_SEC << "\n";
+
+
+
+
 
 	//calculate the flow and find the path
 	int srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
@@ -305,7 +363,17 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 		flow = flowNeeded;
 	path[0] = 0;
 	
-	
+
+
+
+//for debug
+//	end = clock();
+//	std::cout << (double)(end - start)/CLOCKS_PER_SEC << "\n";
+
+
+
+
+
 	//update residualGraphi, network and fullFlows EmptyFlows
 	int temp_flow = flow, reducedFlow = 0; //which is used for flow, which will be decrease.
 	for(int i = 0; i < pathSize; i++)

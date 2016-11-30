@@ -2,7 +2,7 @@
 #include "iostream"
 #include <cstdlib>
 
-void BinaryMaxHeap::insert(Vertex x)
+void BinaryMaxHeap::insert(Vertex* x)
 {
 	if(currentSize == capacity - 1)
 	{
@@ -10,7 +10,7 @@ void BinaryMaxHeap::insert(Vertex x)
 		exit(0);
 	}
 	int hole = ++ currentSize;
-	for(; hole > 1 && !(x < array[hole / 2]); hole /= 2)
+	for(; hole > 1 && !(*x < *(array[hole / 2])); hole /= 2)
 		array[hole] = array[hole / 2];
 	array[hole] = x;
 }
@@ -25,7 +25,7 @@ bool BinaryMaxHeap::isEmpty()
 }
 
 
-Vertex BinaryMaxHeap::deleteMax()
+Vertex* BinaryMaxHeap::deleteMax()
 {
 	if(isEmpty())
 	{
@@ -33,7 +33,7 @@ Vertex BinaryMaxHeap::deleteMax()
 		exit(0);
 	}
 
-	Vertex maxItem = Vertex();
+	Vertex* maxItem; //= Vertex();
 	maxItem = array[1];
 	array[1] = array[currentSize--];
 	percolateDown(1);
@@ -44,15 +44,16 @@ Vertex BinaryMaxHeap::deleteMax()
 void BinaryMaxHeap::percolateDown(int hole)
 {
 	int child;
-	Vertex tmp = Vertex();
+//	Vertex tmp = Vertex();
+	Vertex* tmp;
 	tmp = array[hole];
 
 	for(; hole*2 <= currentSize; hole = child)
 	{
 		child = hole*2;
-		if(child != currentSize && !(array[child + 1] < array[child]))
+		if(child != currentSize && !(*array[child + 1] < *array[child]))
 			child++;
-		if(!(array[child] < tmp))
+		if(!(*array[child] < *tmp))
 			array[hole] = array[child];
 		else
 			break;
