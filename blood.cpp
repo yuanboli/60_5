@@ -33,7 +33,7 @@ void Vertex::operator=(Vertex rhs)
 	ID = rhs.ID;
 	fed = rhs.fed;
 	fedNumber = rhs.fedNumber;
-	*edges = *(rhs.edges);
+		*edges = *(rhs.edges);
 	known = rhs.known;
 	prev = rhs.prev;
 	score = rhs.score;
@@ -151,7 +151,8 @@ void Graph::addReverseEdge(int flow, int newEdgeStart, int newEdgeEnd)
 	v.src = newEdgeStart;
 	v.dest = newEdgeEnd;
 	v.capacity = flow;
-	vertex[newEdgeStart].insertVessel(-1, v);
+	int id = 0 - vertex[newEdgeEnd].edges->findID(newEdgeStart); 
+	vertex[newEdgeStart].insertVessel(id, v);
 
 }//Graph::addReverseEdge
 
@@ -240,14 +241,15 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 	{
 		Vertex v = Vertex();
 		v = heap->deleteMax();
-		if(residualGraph->vertex[v.ID].known == false && v.ID != residualGraph->vertexCount - 1)
+//		if(residualGraph->vertex[v.ID].known == false)
+		if(residualGraph->vertex[v.ID].score == v.score)
 		{
 			residualGraph->vertex[v.ID].known = true;
 			ListNode* node = v.edges->root;
 			while(node != NULL)
 			{
-				if(residualGraph->vertex[node->dest].known == false)
-				{
+//**  			if(residualGraph->vertex[node->dest].known == false)
+//** 				{
 					double newScore;
 					if(residualGraph->vertex[node->dest].fed == true)
 						newScore = v.score;
@@ -262,7 +264,7 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 						residualGraph->vertex[node->dest].prev = v.ID;
 						residualGraph->vertex[node->dest].fedNumber = v.fedNumber + 1;
 						heap->insert(residualGraph->vertex[node->dest]);
-					}
+//**					}
 				}
 				node = node->next;
 			}
@@ -319,7 +321,7 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 			int vesselid = residualGraph->vertex[path[i]].edges->findID(path[i+1]);
 			
 			//deal with full/emptyFlows
-			if(vesselid == -1)//reverse path
+			if(vesselid < 0)//reverse path
 			{
 				vesselid = network->vertex[path[i+1]].edges->findID(path[i]);
 				fullFlows[vesselid] -= temp_flow;
@@ -332,10 +334,10 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 			}
 
 
-			//reverse path
+/*			//reverse path
 			if(i != 0 && i < pathSize - 2)//starting path does not need reverse.
 				residualGraph->addReverseEdge(flow, path[i+1], path[i]);
-			
+*/			
 			
 			//update network, residualGraph, including fed, capacity
 				//capacity
