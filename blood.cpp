@@ -240,7 +240,7 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 	{
 		Vertex v = Vertex();
 		v = heap->deleteMax();
-		if(residualGraph->vertex[v.ID].known == false)
+		if(residualGraph->vertex[v.ID].known == false && v.ID != residualGraph->vertexCount - 1)
 		{
 			residualGraph->vertex[v.ID].known = true;
 			ListNode* node = v.edges->root;
@@ -253,7 +253,7 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 						newScore = v.score;
 					else
 					{
-						newScore = v.score + residualGraph->vertex[node->dest].rank * residualGraph->vertex[node->dest].rank / (v.fedNumber + 1);
+						newScore = v.score + residualGraph->vertex[node->dest].rank * residualGraph->vertex[node->dest].rank * 5 / (v.fedNumber + 1);
 					}
 
 					if(newScore > residualGraph->vertex[node->dest].score)
@@ -275,7 +275,7 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 	//calculate the flow and find the path
 	int srcVertexID = residualGraph->vertex[residualGraph->vertexCount - 1].prev;
 	int destVertexID = residualGraph->vertexCount - 1;
-	if(residualGraph->vertex[destVertexID].score == -1)
+	if(residualGraph->vertex[destVertexID].score == -1 || residualGraph->vertex[destVertexID].score == 0)
 		return false;
 	int flow = residualGraph->vertex[srcVertexID].edges->findCapacity(destVertexID);
 	int pathSize = residualGraph->vertex[destVertexID].fedNumber + 1;
