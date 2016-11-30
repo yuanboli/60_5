@@ -48,6 +48,7 @@ public:
 	void operator=(Graph rhs);
 	Graph(Vessel vessels[], int vesselCount, int cellCount);
 	void calRank(); // this function is to calculate the rank for each vertex.
+	void addReverseEdge(int flow, int newEdgeStart, int newEdgeEnd);
 } ;
 
 

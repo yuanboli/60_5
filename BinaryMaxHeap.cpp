@@ -6,7 +6,7 @@ void BinaryMaxHeap::insert(Vertex x)
 {
 	if(currentSize == capacity - 1)
 	{
-		std::cout << "BinaryHeap exceeds the index range!\n";
+		std::cout << "BinaryMaxHeap exceeds the index range!\n";
 		exit(0);
 	}
 	int hole = ++ currentSize;

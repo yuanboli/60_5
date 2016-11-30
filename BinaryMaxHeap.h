@@ -5,7 +5,7 @@
 class BinaryMaxHeap
 {
 public:
-	explicit BinaryMaxHeap(int cap = 100)
+	explicit BinaryMaxHeap(int cap = 50000)
 	{currentSize = 0; capacity = cap; array = new Vertex[capacity];}
 
 	void insert(Vertex x);

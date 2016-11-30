@@ -64,7 +64,10 @@ Graph::Graph(Vessel vessels[], int vesselCount, int cellCount)
 		vertex[i].ID = i;
 	}
 
-	for(int i = 0; i < vesselCount; i++)
+	
+	vertex[vessels[vesselCount - 1].src].insertVessel(vesselCount - 1, vessels[vesselCount - 1]);	
+
+	for(int i = 0; i < vesselCount - 1; i++)
 	{
 		vertex[vessels[i].src].insertVessel(i, vessels[i]);	
 	}
@@ -138,6 +141,22 @@ void Graph::operator=(Graph rhs)
 		vertex[i] = rhs.vertex[i];
 	}
 }//Graph::operator=
+
+	
+	
+///add reverse edge for residualGraph
+void Graph::addReverseEdge(int flow, int newEdgeStart, int newEdgeEnd)
+{
+	Vessel v = Vessel();
+	v.src = newEdgeStart;
+	v.dest = newEdgeEnd;
+	v.capacity = flow;
+	vertex[newEdgeStart].insertVessel(-1, v);
+
+}//Graph::addReverseEdge
+
+
+
 
 ///
 /*
@@ -284,10 +303,11 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 	{
 		if(i < pathSize - 1)
 		{
-			//deal with full/emptyFlows;
+			
+			//deal with totalFed, network/residualGraph->fed
 			if(residualGraph->vertex[path[i]].fed == false)
 			{
-				if(temp_flow > 0)
+				if(temp_flow > 0)// if there is still full flows
 				{
 					temp_flow --;
 					reducedFlow++;
@@ -297,14 +317,33 @@ bool Blood::newFlow( int fullFlows[], int emptyFlows[])
 				}
 			}
 			int vesselid = residualGraph->vertex[path[i]].edges->findID(path[i+1]);
-			fullFlows[vesselid] += temp_flow;
-			emptyFlows[vesselid] += reducedFlow;
+			
+			//deal with full/emptyFlows
+			if(vesselid == -1)//reverse path
+			{
+				vesselid = network->vertex[path[i+1]].edges->findID(path[i]);
+				fullFlows[vesselid] -= temp_flow;
+				emptyFlows[vesselid] -= reducedFlow;
+			}
+			else//normal path
+			{
+				fullFlows[vesselid] += temp_flow;
+				emptyFlows[vesselid] += reducedFlow;
+			}
+
+
+			//reverse path
+			if(i != 0 && i < pathSize - 2)//starting path does not need reverse.
+				residualGraph->addReverseEdge(flow, path[i+1], path[i]);
+			
 			
 			//update network, residualGraph, including fed, capacity
 				//capacity
 			residualGraph->vertex[path[i]].edges->reduceCapacity(path[i+1], flow);
+			
+			
 		}
-		else
+		else// for the last cell of the path
 		{
 			if(residualGraph->vertex[path[i]].fed == false)
 			{
